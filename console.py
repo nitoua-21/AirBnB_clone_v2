@@ -140,8 +140,8 @@ class HBNBCommand(cmd.Cmd):
             param_type = self.types.get(value)
             value = param_type(value) if param_type else value
             attr_dict[key] = value
-        new_instance = HBNBCommand.classes[model_name]()
-        new_instance.__dict__.update(attr_dict)
+        new_instance = HBNBCommand.classes[model_name](**attr_dict)
+        storage.new(new_instance)
         storage.save()
         print(new_instance.id)
         storage.save()

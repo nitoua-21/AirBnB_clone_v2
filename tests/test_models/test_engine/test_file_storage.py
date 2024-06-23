@@ -2,6 +2,7 @@
 """ Module for testing file storage"""
 import unittest
 from models.base_model import BaseModel
+from models.state import State
 from models import storage
 import os
 
@@ -41,8 +42,23 @@ class test_fileStorage(unittest.TestCase):
         temp = storage.all()
         self.assertIsInstance(temp, dict)
 
+    def test_new_instance(self):
+        obj = BaseModel()
+        storage.new(obj)
+        key = f"BaseModel.{obj.id}"
+        self.assertIn(key, storage.all())
+        self.assertEqual(storage.all()[key], obj)
+
+    def test_new_instance_with_kwargs(self):
+        obj = State(name="California")
+        storage.new(obj)
+        key = f"State.{obj.id}"
+        self.assertIn(key, storage.all())
+        self.assertEqual(storage.all()[key], obj)
+        self.assertIn("name", obj.to_dict())
+
     def test_base_model_instantiation(self):
-        """ File is not created on BaseModel save """
+        """ File is created on BaseModel save """
         new = BaseModel()
         self.assertFalse(os.path.exists('file.json'))
 

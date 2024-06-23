@@ -15,6 +15,12 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             storage.new(self)
         else:
+            if 'created_at' not in kwargs.keys():
+                self.created_at = datetime.now()
+            if 'updated_at' not in kwargs.keys():
+                self.updated_at = datetime.now()
+            if 'id' not in kwargs.keys():
+                self.id = str(uuid.uuid4())
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
                     value = datetime.fromisoformat(value)
