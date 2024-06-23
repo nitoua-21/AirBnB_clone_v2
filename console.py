@@ -114,14 +114,34 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """
+        Creates a new instance of BaseModel, saves it and prints the id
+        Usage: create <Class name> <param 1> <param 2> <param 3>...
+        """
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        input_str = args.split()
+        model_name = input_str[0]
+
+        if model_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        if len(input_str) == 1:
+            new_instance = HBNBCommand.classes[args]()
+            storage.save()
+            print(new_instance.id)
+            storage.save()
+            return
+        attr_dict = {}
+        for param in input_str[1:]:
+            key = param.split("=")[0]
+            value = param.split("=")[1].strip('"').replace("_", " ")
+            param_type = self.types.get(value)
+            value = param_type(value) if param_type else value
+            attr_dict[key] = value
+        new_instance = HBNBCommand.classes[model_name]()
+        new_instance.__dict__.update(attr_dict)
         storage.save()
         print(new_instance.id)
         storage.save()
@@ -319,6 +339,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
