@@ -53,9 +53,9 @@ class test_fileStorage(unittest.TestCase):
         obj = State(name="California")
         storage.new(obj)
         key = f"State.{obj.id}"
-        self.assertIn(key, storage.all())
+        self.assertIn(key, storage.all().keys())
         self.assertEqual(storage.all()[key], obj)
-        self.assertIn("name", obj.to_dict())
+        self.assertEqual(storage.all()[f"State.{obj.id}"].name, "California")
 
     def test_base_model_instantiation(self):
         """ File is created on BaseModel save """
