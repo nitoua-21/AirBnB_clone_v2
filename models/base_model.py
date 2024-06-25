@@ -57,9 +57,9 @@ class BaseModel:
         if '_sa_instance_state' in dictionary:
             dictionary.pop('_sa_instance_state')
         return dictionary
-    
+
     def delete(self):
-        """Delete the current instance"""
+        """Delete the current instance of the storage"""
         from models import storage
         key = f'{type(self).__name}.{self.id}'
         if key in storage.all():
