@@ -40,7 +40,7 @@ class DBStorage:
             response = self.__session.query(cls)
             for data in response:
                 key = f"{type(data).__name__}.{data.id}"
-                dict[key] = data
+                obj_dict[key] = data
         else:
             all_object = [User, State, Amenity, Place, Review]
             for obj in all_object:
@@ -61,19 +61,11 @@ class DBStorage:
 
     def delete(self, obj=None):
         if obj is not None:
-            self.__session.delete()
+            self.__session.delete(obj)
 
-    def relaod(self):
+    def reload(self):
         """Create all tables in the DB"""
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.place import Place
-        from models.state import State
-        from models.city import City
-        from models.amenity import Amenity
-        from models.review import Review
-
         Base.metadata.create_all(self.__engine)
         newSession = scoped_session(sessionmaker(
             bind=self.__engine, expire_on_commit=False))
-        self.__session = newSession
+        self.__session = newSession()

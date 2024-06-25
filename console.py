@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+from os import getenv
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -149,6 +150,7 @@ class HBNBCommand(cmd.Cmd):
                 except ValueError:
                     continue
             setattr(new_instance, key, value)
+        storage.new(new_instance)
         storage.save()
         print(new_instance.id)
 
@@ -223,23 +225,22 @@ class HBNBCommand(cmd.Cmd):
         print("Destroys an individual instance of a class")
         print("[Usage]: destroy <className> <objectId>\n")
 
-    def do_all(self, args):
+    def do_all(self, arg):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
-
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
+        if arg:
+            if arg not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
-        else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
 
-        print(print_list)
+            instances = [str(obj) for obj in storage.all(
+                eval(arg)).values() if type(obj).__name__ == arg]
+        else:
+            instances = [str(obj) for obj in storage.all().values()]
+
+        print('[', end='')
+        for instance in instances:
+            print(instance, end=', ' if instance != instances[-1] else '')
+        print(']')
 
     def help_all(self):
         """ Help information for the all command """

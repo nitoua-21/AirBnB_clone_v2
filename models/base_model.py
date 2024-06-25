@@ -37,7 +37,7 @@ class BaseModel:
     def __str__(self):
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+        return '[{}] ({}) {}'.format(cls, self.id, self.to_dict())
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
@@ -48,15 +48,16 @@ class BaseModel:
 
     def to_dict(self):
         """Convert instance into dict format"""
-        dictionary = {}
-        dictionary.update(self.__dict__)
-        dictionary.update({'__class__':
-                          (str(type(self)).split('.')[-1]).split('\'')[0]})
-        dictionary['created_at'] = self.created_at.isoformat()
-        dictionary['updated_at'] = self.updated_at.isoformat()
-        if '_sa_instance_state' in dictionary:
-            dictionary.pop('_sa_instance_state')
-        return dictionary
+        from models import storage
+        dict_repr = self.__dict__.copy()
+
+        if type(storage).__name__ == 'FileStorage':
+            dict_repr['__class__'] = self.__class__.__name__
+            dict_repr['created_at'] = self.created_at.isoformat()
+            dict_repr['updated_at'] = self.updated_at.isoformat()
+        if '_sa_instance_state' in dict_repr:
+            dict_repr.pop('_sa_instance_state')
+        return dict_repr
 
     def delete(self):
         """Delete the current instance of the storage"""
