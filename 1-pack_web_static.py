@@ -4,7 +4,7 @@ Fabric script generates .tgz archive of all in web_static/ using func 'do_pack'
 Usage: fab -f 1-pack_web_static.py do_pack
 """
 from fabric.api import local
-from strftime import time
+from time import strftime
 
 
 def do_pack():
