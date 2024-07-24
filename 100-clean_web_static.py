@@ -51,6 +51,9 @@ def do_deploy(archive_path):
 
 
 def deploy():
+    """
+    Deploy archive to serves
+    """
     archive_path = do_pack()
     if archive_path is None:
         return False
@@ -59,6 +62,7 @@ def deploy():
 
 
 def do_clean(number=0):
+    """Clean"""
     if number == 0:
         number = 1
     with cd.local('./versions'):
